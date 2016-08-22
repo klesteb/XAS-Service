@@ -4,7 +4,7 @@
 # Date: 30-Jun-2014
 # By  : Kevin Esteb
 #
-# postinst script for libxas-xxxx-perl
+# postinst script for libxas-service-perl
 #
 # Create the directory structure needed and set permissions
 #

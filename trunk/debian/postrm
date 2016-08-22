@@ -4,7 +4,7 @@
 # Date: 30-Jun-2014
 # By  : Kevin Esteb
 #
-# postrm script for libxas-xxxx-perl
+# postrm script for libxas-service-perl
 #
 # Remove the directory structure
 #

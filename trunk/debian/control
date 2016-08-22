@@ -1,4 +1,4 @@
-Source: libxas-xxxx-perl
+Source: libxas-service-perl
 Section: perl
 Priority: optional
 Build-Depends: debhelper (>= 7), perl
@@ -6,10 +6,13 @@ Maintainer: kevin l. esteb <kevin@kesteb.us>
 Standards-Version: 3.9.4
 Homepage: http://search.cpan.org/dist/XAS/xxxx
 
-Package: libxas-xxxx-perl
+Package: libxas-service-perl
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}
 Description: Middelware for Perl
  .
  XAS is middleware for Perl. It provides standardized methods, modules
  and philosophy for constructing large distributed applications.
+.
+ This set of modules helps implement a Micro Service.
+ 

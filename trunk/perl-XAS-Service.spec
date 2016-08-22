@@ -1,11 +1,11 @@
-Name:           perl-XAS-XXXX
-Version:        0.01
+Name:           perl-XAS-Service
+Version:        1.00
 Release:        1%{?dist}
 Summary:        A set of processes to manage spool files
 License:        Artistic 2.0
 Group:          Development/Libraries
-URL:            http://scm.kesteb.us/git/XAS-XXXX/trunk/
-Source0:        XAS-XXXX-%{version}.tar.gz
+URL:            http://scm.kesteb.us/git/XAS-Service/trunk/
+Source0:        XAS-Service-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl(Module::Build)
@@ -31,20 +31,20 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 A set of processes to manage spool files
 
 %prep
-%setup -q -n XAS-XXXX-%{version}
+%setup -q -n XAS-Service-%{version}
 
 %if 0%{?rhel} == 5
 cat << \EOF > %{name}-prov
 #!/bin/sh
 %{__perl_provides} $* | sed -e '/Win32/d'
 EOF
-%global __perl_provides %{_builddir}/XAS-XXXX-%{version}/%{name}-prov
+%global __perl_provides %{_builddir}/XAS-Service-%{version}/%{name}-prov
 chmod +x %{__perl_provides}
 cat << \EOF > %{name}-req
 #!/bin/sh
 %{__perl_requires} $* | sed -e '/Win32/d'
 EOF
-%global __perl_requires %{_builddir}/XAS-XXXX-%{version}/%{name}-req
+%global __perl_requires %{_builddir}/XAS-Service-%{version}/%{name}-req
 chmod +x %{__perl_requires}
 %endif
 
@@ -69,12 +69,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc Changes README perl-XXXX.spec
+%doc Changes README perl-XAS-Service.spec
 %{perl_vendorlib}/*
-%config(noreplace) %{_sysconfig}/xxxx
-%config(noreplace) %{_logrotated}/xxxx
-%config(noreplace) %{_initd}/xxxx
-%config(noreplace) %{_xasconf}/xxxx
+%config(noreplace) %{_sysconfig}/xas-service
+%config(noreplace) %{_logrotated}/xas-service
+%config(noreplace) %{_initd}/xas-service
+%config(noreplace) %{_xasconf}/xas-service.ini
 %{_mandir}/*
 %{_sbindir}/*
 %{_bindir}/*

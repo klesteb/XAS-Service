@@ -1,4 +1,4 @@
-package XAS::xxxx;
+package XAS::Service;
 
 use strict;
 use warnings;
@@ -11,7 +11,7 @@ __END__
   
 =head1 NAME
 
-XAS::xxxx - A set of modules and utilities to <do something>
+XAS::Service - A set of modules and utilities to implement Micro Services
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ Kevin L. Esteb, E<lt>kevin@kesteb.usE<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2012-2015 Kevin L. Esteb
+Copyright (c) 2012-2016 Kevin L. Esteb
 
 This is free software; you can redistribute it and/or modify it under
 the terms of the Artistic License 2.0. For details, see the full text
