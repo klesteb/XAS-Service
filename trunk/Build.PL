@@ -14,7 +14,7 @@ my $install_path = {
 };
 
 my $requires = {
-     'XAS' => '0.15',
+     'XAS' => '0.12',
      'Plack' => 0.0,
      'Template' => 0.0,
      'Net::LDAP' => 0.0,
