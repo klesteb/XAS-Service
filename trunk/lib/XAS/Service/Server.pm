@@ -15,10 +15,6 @@ use XAS::Class
   debug   => 0,
   version => $VERSION,
   base    => 'XAS::Lib::Net::Server',
-  messages => {
-    'web_requested' => '%s: %s has requested a %s on %s with a resulting status of %s',
-    'client_flushed' => '%s: flushed the connection for %s on port %s, using wheel %s',
-  },
   vars => {
     PARAMS => {
       -app => { type => CODEREF },
@@ -83,9 +79,9 @@ sub _client_flushed {
     my $port  = $self->peerport($wheel);
 
     $self->log->debug(sprintf('%s: _client_flushed() - wheel: %s, host: %s, port: %s', $alias, $wheel, $host, $port));
-    $self->log->info_msg('client_flushed', $alias, $host, $port, $wheel);
+    $self->log->info_msg('service_client_flushed', $alias, $host, $port, $wheel);
 
-    delete $self->{clients}->{$wheel};
+    delete $self->{'clients'}->{$wheel};
 
 }
 

@@ -11,6 +11,14 @@ BuildArch:      noarch
 BuildRequires:  perl(Module::Build)
 BuildRequires:  perl(Test::More)
 Requires:       perl(XAS) >= 0.12
+Requires:       perl(Plack) >= 1.0
+Requires:       perl(Template) >= 2.18
+Requires:       perl(Net::LDAP) >= 0.33
+Requires:       perl(WPM::Model) >= 0.02
+Requires:       perl(Web::Machine) >= 0.17
+Requires:       perl(Data::FormValidator) >= 4.81
+Requires:       perl(POE::Filter::HTTP::Parser) >= 1.08
+Requires:       perl(Data::FormValidator::Constraints::MethodsFactory) >= 0.02
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %define _initd      %{_sysconfdir}/rc.d/init.d
@@ -19,8 +27,7 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %define _profiled   %{_sysconfdir}/profile.d
 %define _xasconf    %{_sysconfdir}/xas
 
-%if 0%{?rhel} == 6
-%define _mandir /usr/local/share/man
+%if 0%{?rhel} >= 6
 %{?filter_setup: %{?perl_default_filter} }
 %filter_from_requires /Win32/d
 %filter_from_provides /Win32/d
