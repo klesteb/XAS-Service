@@ -15,6 +15,7 @@ use XAS::Class
   debug   => 0,
   version => $VERSION,
   base    => 'XAS::Lib::Net::Server',
+  utils   => ':validation',
   vars => {
     PARAMS => {
       -app => { type => CODEREF },
@@ -27,7 +28,8 @@ use XAS::Class
 # ---------------------------------------------------------------------
 
 sub process_request {
-    my ($self, $request, $ctx) = @_[OBJECT,ARG0,ARG1];
+    my $self = shift;
+    my ($request, $ctx) = validate_params(\@_, [1,1]);
 
     my $app      = $self->app;
     my $alias    = $self->alias;
@@ -50,16 +52,17 @@ sub process_request {
 
     $self->log->debug(Dumper($response));
 
-    $poe_kernel->call($alias, 'process_response', $response, $ctx);
+    $self->process_response($response, $ctx);
 
 }
 
 sub process_response {
-    my ($self, $output, $ctx) = @_[OBJECT,ARG0,ARG1];
+    my $self = shift;
+    my ($output, $ctx) = validate_params(\@_, [1,1]);
 
     my $alias = $self->alias;
 
-    $poe_kernel->call($alias, 'client_output', $output, $ctx->{wheel});
+    $poe_kernel->call($alias, 'client_output', $output, $ctx);
 
 }
 

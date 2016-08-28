@@ -1,17 +1,17 @@
-package XAS::Apps::Rexec::Service;
+package XAS::Apps::Service::Testd;
 
 use Template;
 use JSON::XS;
 use Web::Machine;
 use Plack::Builder;
 use Plack::App::File;
+use Plack::App::URLMap;
 use XAS::Service::Server;
-use XAS::Service::Resource;
 
 use XAS::Class
   version    => '0.01',
   base       => 'XAS::Lib::App::Service',
-  mixin      => 'XAS::Lib::Mixin::Configs',
+  mixin      => 'XAS::Lib::Mixins::Configs',
   filesystem => 'File',
   accessors  => 'cfg',
   vars => {
@@ -53,8 +53,9 @@ sub build_app {
     # handlers, using URLMap for routing
 
     my $builder = Plack::Builder->new();
-
-    $builder->mount('/' => Web::Machine->new(
+    my $urlmap  = Plack::App::URLMap->new();
+    
+    $urlmap->mount('/' => Web::Machine->new(
         resource => 'XAS::Service::Resource',
         resource_args => [
             alias           => 'root',
@@ -62,24 +63,24 @@ sub build_app {
             json            => $json,
             app_name        => $name,
             app_description => $description
-        ] )->to_app
+        ] )
     );
 
     # static files
 
-    $builder->mount('/js' => Plack::App::File->new(
-        root => $base . '/root/js' )->to_app
+    $urlmap->mount('/js' => Plack::App::File->new(
+        root => $base . '/root/js' )
     );
 
-    $builder->mount('/css' => Plack::App::File->new(
-        root => $base . '/root/css')->to_app
+    $urlmap->mount('/css' => Plack::App::File->new(
+        root => $base . '/root/css')
     );
 
-    $builder->mount('/yaml' => Plack::App::File->new(
-        root => $base . '/root/yaml/yaml')->to_app
+    $urlmap->mount('/yaml' => Plack::App::File->new(
+        root => $base . '/root/yaml/yaml')
     );
 
-    return $builder->to_app;
+    return $builder->to_app($urlmap->to_app);
 
 }
 
@@ -90,7 +91,7 @@ sub setup {
         -alias   => 'interface',
         -port    => $self->cfg->val('system', 'port', 9507),
         -address => $self->cfg->val('system', 'address', 'localhost'),
-        -app     => $self->build_app(),
+        -app     => $self->build_app,
     );
 
     $self->service->register('interface');
@@ -118,7 +119,7 @@ sub init {
 
     my $self = $class->SUPER::init(@_);
 
-    $self->load_configs();
+    $self->load_config();
 
     return $self;
 

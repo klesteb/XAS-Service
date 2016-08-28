@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Net::LDAP;
-use XAS::System;
+use XAS::Factory;
 use Data::Dumper;
 use Hash::MultiValue;
 use parent 'Web::Machine::Resource';
@@ -41,12 +41,8 @@ sub init {
     $self->errcode(0);
     $self->errstr('');
 
-    $self->{'env'} = XAS::System->module('environment');
-    $self->{'log'} = XAS::System->module('logger', {
-        -type     => $self->env->logtype,
-        -filename => $self->env->logfile,
-        -process  => $self->env->script,
-    });
+    $self->{'env'} = XAS::Factory->module('environment');
+    $self->{'log'} = XAS::Factory->module('logger');
 
 }
 
@@ -58,7 +54,7 @@ sub is_authorized {
 
     if ($auth) {
 
-        warn "override this please\n";
+        warn "is_authorized - override this please\n";
 
         $stat = 1;
 

@@ -11,18 +11,27 @@ debian/postrm
 debian/preinst
 debian/rules
 debian/watch
+etc/xas-testd.ini
+init.d/xas-testd.debian
+init.d/xas-testd.rhel
+lib/XAS/Apps/.gitkeeper
+lib/XAS/Apps/Service/Testd.pm
 lib/XAS/Msgs/Service.msg
 lib/XAS/Service.pm
 lib/XAS/Service/CheckParameters.pm
 lib/XAS/Service/Profiles.pm
 lib/XAS/Service/Profiles/Search.pm
 lib/XAS/Service/Resource.pm
+lib/XAS/Service/Resource/.gitkeeper
 lib/XAS/Service/Search.pm
 lib/XAS/Service/Server.pm
+lib/XAS/Service/Server/.gitkeeper
+logrotate.d/xas-testd
 MANIFEST			This list of files
 perl-XAS-Service.spec
 README
 sbin/xas-testd
+sysconfig/xas-testd
 t/00-load.t
 t/boilerplate.t
 t/manifest.t
