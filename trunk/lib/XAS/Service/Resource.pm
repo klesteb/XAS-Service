@@ -3,7 +3,6 @@ package XAS::Service::Resource;
 use strict;
 use warnings;
 
-use Net::LDAP;
 use XAS::Factory;
 use Data::Dumper;
 use Hash::MultiValue;
@@ -55,6 +54,7 @@ sub is_authorized {
     if ($auth) {
 
         warn "is_authorized - override this please\n";
+        warn sprintf("username: %s, password: %s\n", $auth->username, $auth->password);
 
         $stat = 1;
 
