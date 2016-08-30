@@ -500,6 +500,15 @@ XAS::Service::Resource - Perl extension for the XAS environment
  my $description = 'test web service';
 
  sub build_app {
+    my $self = shift;
+
+    # define base, name and description
+
+    my $base = $self->cfg->val('app', 'base', '/home/kevin/dev/XAS-Service/trunk/web');
+    my $name = $self->cfg->val('app', 'name', 'WEB Services');
+    my $description = $self->cfg->val('app', 'description', 'Test api using RESTFUL HAL-JSON');
+
+    # Template config
 
     my $config = {
         INCLUDE_PATH => File($base, 'root')->path,   # or list ref
@@ -509,7 +518,7 @@ XAS::Service::Resource - Perl extension for the XAS environment
     # create various objects
 
     my $template = Template->new($config);
-    my $json     = JSON::XS->new->pretty->utf8();
+    my $json     = JSON::XS->new->utf8();
 
     # allow variables with preceeding _
 
@@ -518,33 +527,34 @@ XAS::Service::Resource - Perl extension for the XAS environment
     # handlers, using URLMap for routing
 
     my $builder = Plack::Builder->new();
-
-    $builder->mount('/' => Web::Machine->new(
-        resource => 'XAS::Service::Resource::Root',
+    my $urlmap  = Plack::App::URLMap->new();
+    
+    $urlmap->mount('/' => Web::Machine->new(
+        resource => 'XAS::Service::Resource',
         resource_args => [
             alias           => 'root',
             template        => $template,
             json            => $json,
             app_name        => $name,
             app_description => $description
-        ] )->to_app
+        ] )
     );
 
     # static files
 
-    $builder->mount('/js' => Plack::App::File->new(
-        root => $base . '/root/js' )->to_app
+    $urlmap->mount('/js' => Plack::App::File->new(
+        root => $base . '/root/js' )
     );
 
-    $builder->mount('/css' => Plack::App::File->new(
-        root => $base . '/root/css')->to_app
+    $urlmap->mount('/css' => Plack::App::File->new(
+        root => $base . '/root/css')
     );
 
-    $builder->mount('/yaml' => Plack::App::File->new(
-        root => $base . '/root/yaml/yaml')->to_app
+    $urlmap->mount('/yaml' => Plack::App::File->new(
+        root => $base . '/root/yaml/yaml')
     );
 
-    return $builder->to_app;
+    return $builder->to_app($urlmap->to_app);
 
  }
 
@@ -575,8 +585,8 @@ in the XAS environment and log handling.
 
 =head2 is_authorized
 
-This method uses basic authenication and checks wither the user is valid
-by accesing WSIPC's AD with the passed username and password.
+This method uses basic authenication and checks wither the user is valid. This
+needs to be overridden.
 
 =head2 options
 
@@ -630,15 +640,15 @@ html interface. This needs to be overridden for any useful to happen.
 =head2 get_links
 
 This method returns the links associated with this handler. Used in the html
-interface and json responses. This needs to be overridden for any useful to
-happen.
+interface and json responses. This needs to be overridden for anything useful 
+to happen.
 
 =head2 get_response
 
 This method is called to help create a response. It calls get_navigation() and
 get_links() as helpers. It returns a data structure that will be converted to
 a html page or json depending on how the request was made. This needs to be
-overridden for any useful to happen.
+overridden for anything useful to happen.
 
 =head2 json_to_multivalue
 
@@ -680,7 +690,7 @@ Formats the response as html.
 
 =head2 process_params($params)
 
-This method processes the post parameters. This needs to be overriden.
+This method processes the post parameters. This needs to be overridden.
 
 =over 4
 

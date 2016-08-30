@@ -126,7 +126,7 @@ XAS::Service::Server - Perl extension for the XAS environment
 
 =head1 DESCRIPTION
 
-This module provides basic web server based on POE. It binds the POE
+This module provides a basic web server based on POE. It binds the POE
 environment to the Plack environment. It's primary mission is to run
 L<Web::Machine|https://metacpan.org/pod/Web::Machine>. This allows for the
 building of REST based web services quickly and easily. Which also allows the
@@ -147,7 +147,7 @@ This should be a complied Plack application.
 
 =back
 
-=head2 process_request($kernel, $self, $input, $ctx)
+=head2 process_request($input, $ctx)
 
 This event will process the input from the client. This method will
 take the L<HTTP::Request|https://metacpan.org/pod/HTTP::Request> and
@@ -160,14 +160,6 @@ It takes the following parameters:
 
 =over 4
 
-=item B<$kernel>
-
-A handle to the POE kernel.
-
-=item B<$self>
-
-A handle to the current object.
-
 =item B<$input>
 
 The input received from the socket.
@@ -179,7 +171,7 @@ field. Others fields may be added as needed.
 
 =back
 
-=head2 process_response($kernel, $self, $output, $ctx)
+=head2 process_response($output, $ctx)
 
 This event will process the output for the client. It continues the
 synchronous pipeline to handle this response.
@@ -187,14 +179,6 @@ synchronous pipeline to handle this response.
 It takes the following parameters:
 
 =over 4
-
-=item B<$kernel>
-
-A handle to the POE kernel.
-
-=item B<$self>
-
-A handle to the current object.
 
 =item B<$output>
 

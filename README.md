@@ -15,7 +15,8 @@ it in the usual Perl fashion or there are build scripts for creating
 Debian and RHEL install packages. Please see the included README for
 details.
 
-<additonal details go here>
+This package allows for the quick and easy development of REST based
+micro services.  
 
 Extended documentation is available at: http://scm.kesteb.us/trac
 

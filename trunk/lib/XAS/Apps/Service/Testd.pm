@@ -148,7 +148,7 @@ This module module provides a test micro service.
 =head1 CONFIGURATION
 
 The configuration file follows the familiar Windows .ini format. It contains
-followign stanzas.
+following stanzas.
 
  [system]
  port = 9507
