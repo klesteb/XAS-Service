@@ -10,11 +10,10 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl(Module::Build)
 BuildRequires:  perl(Test::More)
+Requires:       perl(JSON::XS) >= 3.01
 Requires:       perl(XAS) >= 0.12
 Requires:       perl(Plack) >= 1.0
 Requires:       perl(Template) >= 2.18
-Requires:       perl(Net::LDAP) >= 0.33
-Requires:       perl(WPM::Model) >= 0.02
 Requires:       perl(Web::Machine) >= 0.17
 Requires:       perl(Data::FormValidator) >= 4.81
 Requires:       perl(POE::Filter::HTTP::Parser) >= 1.08
