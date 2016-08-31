@@ -10,7 +10,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl(Module::Build)
 BuildRequires:  perl(Test::More)
-Requires:       perl(JSON::XS) >= 3.01
+Requires:       perl(JSON::XS) >= 2.32
 Requires:       perl(XAS) >= 0.12
 Requires:       perl(Plack) >= 1.0
 Requires:       perl(Template) >= 2.18
