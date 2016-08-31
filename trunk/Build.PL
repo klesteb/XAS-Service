@@ -111,6 +111,74 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
     }
 
+    # remove redhat stuff when installing to debian
+
+    sub ACTION_debian {
+        my $self = shift;
+
+        # cleanup the init.d directory
+
+        my $destdir = $self->destdir;
+        my @files = ('xas-collector'); 
+        my @names = map { catfile($destdir, 'etc', 'init.d', $_ . '.rhel') } @files;
+
+        foreach my $file (@names) {
+
+            unlink $file if (-e $file);
+
+        }
+
+        @names = map { catfile($destdir, 'etc', 'init.d', $_ . '.debian') } @files;
+
+        foreach my $file (@names) {
+
+            if ( -e $file) {
+
+                my ($name, $path, $ext) = fileparse($file, qr/\.[^.]*/);
+                my $new = catfile($path, $name);
+
+                move($file, $new);
+
+            }
+
+        }
+
+    }
+
+    # remove debian stuff when installing to redhat
+
+    sub ACTION_redhat {
+        my $self = shift;
+
+        # cleanup the init.d directory
+
+        my $destdir = $self->destdir;
+        my @files = ('xas-collector'); 
+        my @names = map { catfile($destdir, 'etc',  'init.d', $_ . '.debian') } @files;
+
+        foreach my $file (@names) {
+
+            unlink $file if (-e $file);
+
+        }
+
+        @names = map { catfile($destdir, 'etc', 'init.d', $_ . '.rhel') } @files;
+
+        foreach my $file (@names) {
+
+            if ( -e $file) {
+
+                my ($name, $path, $ext) = fileparse($file, qr/\.[^.]*/);
+                my $new = catfile($path, $name);
+
+                move($file, $new);
+
+            }
+
+        }
+
+    }
+
     sub process_etc_files {
         my $self = shift;
 

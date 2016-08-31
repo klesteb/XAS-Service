@@ -61,8 +61,8 @@ chmod +x %{__perl_requires}
 %install
 rm -rf $RPM_BUILD_ROOT
 
-./Build install destdir=$RPM_BUILD_ROOT create_packlist=0
-./Build redhat destdir=$RPM_BUILD_ROOT
+./Build install --destdir=$RPM_BUILD_ROOT create_packlist=0
+./Build redhat --destdir=$RPM_BUILD_ROOT
 
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
 %{_fixperms} $RPM_BUILD_ROOT/*
