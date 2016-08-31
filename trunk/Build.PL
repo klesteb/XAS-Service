@@ -1,44 +1,48 @@
+#
+# Boiler plate Build.PL
+#
+# Should work with Win32 and Linux. Replace XXX with something usefull.
+#
+
 use strict;
 use warnings FATAL => 'all';
 use Module::Build;
 
+my $requires = {
+    'perl'                      => 5.008_08,
+    'XAS'                       => 0.12,
+    'JSON::XS'                  => 2.32,
+    'Plack'                     => 0.9989,
+    'Template'                  => 2.18,
+    'Web::Machine'              => 0.17,
+    'Data::FormValidator'       => 4.70,
+    'POE::Filter::HTTP::Parser' => 1.06,
+    'Data::FormValidator::Constraints::MethodsFactory' => 0.02
+};
+    
+my $sysconfig = ( -e '/etc/default' ) ? '/etc/default' : '/etc/sysconfig';
 my $install_path = {
-    db            => '/var/lib/xas',
     etc           => '/etc/xas',
-    web           => '/var/lib/xas/web',
     sbin          => '/usr/sbin',
     script        => '/usr/bin',
-    sysconfig     => '/etc/sysconfig',
+    sysconfig     => $sysconfig,
     'init.d'      => '/etc/init.d',
-    'logrotate.d' => '/etc/logrotate.d',
+    'profile.d'   => '/etc/profile.d',
+    'logrotate.d' => '/etc/logrotate.d'
 };
 
-my $requires = {
-     'XAS' => '0.12',
-     'Plack' => 0.0,
-     'Template' => 0.0,
-     'JSON::XS' => '2.32',
-     'Web::Machine' => 0.0,
-     'Data::FormValidator' => 0.0,
-     'POE::Filter::HTTP::Parser' => 0.0,
-     'Data::FormValidator::Constraints::MethodsFactory' => 0.0,
-};
+if ($^O eq 'MSWin32') {
 
-if ($^O eq 'MSwin32') {
+    my $path = defined($ENV{XAS_ROOT}) ? $ENV{XAS_ROOT} : 'C:\\xas';
 
-    my $path = defined($ENV{XAS_ROOT}) ? $ENV{XAS_ROOT} : 'D:\\xas';
-
-   $install_path = {
-       db            => $path . '\\lib',
-       etc           => $path . '\\etc',
-       web           => $path . '\\lib\\web',
-       sbin          => $path . '\\sbin',
-       script        => $path . '\\bin',
-       sysconfig     => $path . '\\etc\\sysconfig',
+    my $install_path = {
+        etc          => $path . '\\etc',
+        sbin         => $path . '\\sbin',
+        script       => $path . '\\bin',
        'init.d'      => $path . '\\etc\\init.d',
        'logrotate.d' => $path . '\\etc\\logrotate.d',
        'profile.d'   => $path . '\\etc\\profile.d',
-   };
+    };
 
 }
 
@@ -48,6 +52,7 @@ my $class = Module::Build->subclass(code => <<'EOC');
     use warnings;
 
     use IO::File;
+    use File::Copy;
     use File::Find;
     use File::Basename;
     use File::Spec::Functions qw( catfile catdir rel2abs );
@@ -72,9 +77,9 @@ my $class = Module::Build->subclass(code => <<'EOC');
     sub manify_sbin_pods {
         my $self    = shift;
 
-        my $files  = $self->_find_pods(
+        my $files  = $self->_find_pods( 
             $self->{properties}{sbindoc_dirs},
-            exclude => [ $self->file_qr('\.bat$') ]
+            exclude => [ $self->file_qr('\.bat$') ] 
         );
 
         return unless keys %$files;
@@ -87,12 +92,12 @@ my $class = Module::Build->subclass(code => <<'EOC');
         foreach my $file (keys %$files) {
 
             # Pod::Simple based parsers only support one document per instance.
-            # This is expected to change in a future version
+            # This is expected to change in a future version 
             # (Pod::Simple > 3.03).
 
             # binaries go in section 1p
 
-            my $parser  = Pod::Man->new( section => '1p' );
+            my $parser  = Pod::Man->new( section => '1p' ); 
             my $manpage = $self->man1page_name( $file ) . '.' .
                 $self->config( 'man1ext' );
 
@@ -118,8 +123,8 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
         # cleanup the init.d directory
 
-        my $destdir = $self->destdir;
-        my @files = ('xas-collector'); 
+        my $destdir = $self->destdir || '/';
+        my @files = ('xas-testd'); 
         my @names = map { catfile($destdir, 'etc', 'init.d', $_ . '.rhel') } @files;
 
         foreach my $file (@names) {
@@ -152,8 +157,8 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
         # cleanup the init.d directory
 
-        my $destdir = $self->destdir;
-        my @files = ('xas-collector'); 
+        my $destdir = $self->destdir || '/';
+        my @files = ('xas-testd'); 
         my @names = map { catfile($destdir, 'etc',  'init.d', $_ . '.debian') } @files;
 
         foreach my $file (@names) {
@@ -199,26 +204,6 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
     }
 
-    sub process_web_files {
-        my $self = shift;
-
-        my $result;
-        my $dir = catfile('blib', 'web');
-        my $files = $self->find_web_files;
-
-        mkdir $dir unless (-e $dir);
-
-        while (my ($from, $to) = each %$files) {
-
-            $to = catfile('blib', $to);
-            $result = $self->copy_if_modified(from => $from, to => $to);
-
-        }
-
-        return $self;
-
-    }
-
     sub process_sbin_files {
         my $self = shift;
 
@@ -232,6 +217,7 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
             $to = catfile('blib', $to);
             $result = $self->copy_if_modified(from => $from, to => $to) or next;
+            $self->fix_shebang_line($result) unless $self->is_vmsish;
             $self->make_executable($result);
 
         }
@@ -252,8 +238,8 @@ my $class = Module::Build->subclass(code => <<'EOC');
         while (my ($from, $to) = each %$files) {
 
             $to = catfile('blib', $to);
-            $result = $self->copy_if_modified(from => $from, to => $to) or next;
-            $self->make_executable($result);
+            $self->make_executable($from);
+            $result = $self->copy_if_modified(from => $from, to => $to);
 
         }
 
@@ -273,8 +259,7 @@ my $class = Module::Build->subclass(code => <<'EOC');
         while (my ($from, $to) = each %$files) {
 
             $to = catfile('blib', $to);
-            $result = $self->copy_if_modified(from => $from, to => $to) or next;
-            $self->make_executable($result);
+            $result = $self->copy_if_modified(from => $from, to => $to);
 
         }
 
@@ -294,8 +279,8 @@ my $class = Module::Build->subclass(code => <<'EOC');
         while (my ($from, $to) = each %$files) {
 
             $to = catfile('blib', $to);
-            $result = $self->copy_if_modified(from => $from, to => $to) or next;
-            $self->make_executable($result);
+            $self->make_executable($from);
+            $result = $self->copy_if_modified(from => $from, to => $to);
 
         }
 
@@ -323,27 +308,25 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
     }
 
-    sub find_db_files { shift->find_all_files_no_svn('db'); }
-    sub find_etc_files { shift->find_all_files_no_svn('etc'); }
-    sub find_web_files { shift->find_all_files_no_svn('web'); }
-    sub find_sbin_files { shift->find_all_files_no_svn('sbin'); }
-    sub find_initd_files { shift->find_all_files_no_svn('init.d'); }
-    sub find_sysconf_files { shift->find_all_files_no_svn('sysconfig'); }
-    sub find_profiled_files { shift->find_all_files_no_svn('profile.d'); }
-    sub find_logrotated_files { shift->find_all_files_no_svn('logrotate.d'); }
+    sub find_etc_files { shift->find_all_files_no_scm('etc'); }
+    sub find_sbin_files { shift->find_all_files_no_scm('sbin'); }
+    sub find_initd_files { shift->find_all_files_no_scm('init.d'); }
+    sub find_sysconf_files { shift->find_all_files_no_scm('sysconfig'); }
+    sub find_profiled_files { shift->find_all_files_no_scm('profile.d'); }
+    sub find_logrotated_files { shift->find_all_files_no_scm('logrotate.d'); }
 
-    sub find_all_files_no_svn {
+    sub find_all_files_no_scm {
         my ($self, $dir) = @_;
 
         my $sub = sub {
-            return 1 if ($File::Find::dir !~ /SVN/i and -f $File::Find::name);
+            return ((($File::Find::name !~ /SVN/i)  and
+                     ($File::Find::name !~ /GIT/i)) and
+                    ( -f $File::Find::name));
         };
 
         return { map {$_, $_} @{ $self->rscan_dir($dir, $sub) } };
 
     }
-
-    # fix for scm files in the script directory
 
     sub _files_in {
         my ($self, $dir) = @_;
@@ -356,7 +339,7 @@ my $class = Module::Build->subclass(code => <<'EOC');
         while (defined (my $file = readdir DH)) {
            my $full_path = File::Spec->catfile($dir, $file);
            next if -d $full_path;
-           next if ($file =~ /SVN/i);
+           next if (($file =~ /SVN/i) or ($file =~ /GIT/i));
            push @files, $full_path;
        }
        return @files;
@@ -365,7 +348,7 @@ EOC
 
 my $builder = $class->new(
     module_name         => 'XAS::Service',
-    license             => 'perl',
+    license             => 'artistic_2',
     dist_author         => q{Kevin L. Esteb <kevin@kesteb.us>},
     dist_version_from   => 'lib/XAS/Service.pm',
     release_status      => 'stable',
@@ -375,14 +358,20 @@ my $builder = $class->new(
     build_requires => {
         'Test::More' => 0,
     },
+    meta_add => {
+        resources => {
+            homepage   => 'http://scm.kesteb.us/trac',
+            repository => 'http://scm.kesteb.us/git/XAS-Service',
+        },
+    },
     add_to_cleanup     => [ 'XAS-Service-*' ],
     create_makefile_pl => 'traditional',
-    requires           => $requires,
     install_path       => $install_path,
+    requires           => $requires
 );
 
 $builder->add_build_element('etc');
-$builder->add_build_element('web');
+$builder->add_build_element('msg');
 $builder->add_build_element('sbin');
 $builder->add_build_element('initd');
 $builder->add_build_element('sysconf');
