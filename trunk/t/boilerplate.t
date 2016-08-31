@@ -8,7 +8,7 @@ use Test::More;
 unless ( $ENV{RELEASE_TESTING} ) {
     plan( skip_all => "Author tests not required for installation" );
 } else {
-    plan tests => 1;
+    plan tests => 10;
 }
 
 sub not_in_file_ok {
@@ -55,8 +55,15 @@ TODO: {
     "placeholder date/time"       => qr(Date/time)
   );
 
-  module_boilerplate_ok('lib/XAS/xxxx.pm');
-
+  module_boilerplate_ok('lib/XAS/Service.pm');
+  module_boilerplate_ok('lib/XAS/Apps/Service/Testd.pm');
+  module_boilerplate_ok('lib/XAS/Docs/Service/Installation.pm');
+  module_boilerplate_ok('lib/XAS/Service/CheckParameters.pm');
+  module_boilerplate_ok('lib/XAS/Service/Profiles.pm');
+  module_boilerplate_ok('lib/XAS/Service/Resource.pm');
+  module_boilerplate_ok('lib/XAS/Service/Search.pm');
+  module_boilerplate_ok('lib/XAS/Service/Server.pm');
+  module_boilerplate_ok('lib/XAS/Service/Profiles/Search.pm');
 
 }
 
