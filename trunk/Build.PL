@@ -308,7 +308,28 @@ my $class = Module::Build->subclass(code => <<'EOC');
 
     }
 
+    sub process_web_files {
+        my $self = shift;
+
+        my $result;
+        my $dir = catfile('blib', 'web');
+        my $files = $self->find_web_files;
+
+        mkdir $dir unless (-e $dir);
+
+        while (my ($from, $to) = each %$files) {
+
+            $to = catfile('blib', $to);
+            $result = $self->copy_if_modified(from => $from, to => $to);
+
+        }
+
+        return $self;
+
+    }
+
     sub find_etc_files { shift->find_all_files_no_scm('etc'); }
+    sub find_web_files { shift->find_all_files_no_svn('web'); }
     sub find_sbin_files { shift->find_all_files_no_scm('sbin'); }
     sub find_initd_files { shift->find_all_files_no_scm('init.d'); }
     sub find_sysconf_files { shift->find_all_files_no_scm('sysconfig'); }
@@ -372,6 +393,7 @@ my $builder = $class->new(
 
 $builder->add_build_element('etc');
 $builder->add_build_element('msg');
+$builder->add_build_element('web');
 $builder->add_build_element('sbin');
 $builder->add_build_element('initd');
 $builder->add_build_element('sysconf');
