@@ -329,7 +329,7 @@ my $class = Module::Build->subclass(code => <<'EOC');
     }
 
     sub find_etc_files { shift->find_all_files_no_scm('etc'); }
-    sub find_web_files { shift->find_all_files_no_svn('web'); }
+    sub find_web_files { shift->find_all_files_no_scm('web'); }
     sub find_sbin_files { shift->find_all_files_no_scm('sbin'); }
     sub find_initd_files { shift->find_all_files_no_scm('init.d'); }
     sub find_sysconf_files { shift->find_all_files_no_scm('sysconfig'); }
