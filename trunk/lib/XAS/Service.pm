@@ -22,7 +22,7 @@ how they should work and function.
 XAS is a cross platform suite of modules and procedures. So a XAS based micro 
 service would also have to be the same. Our micro services are based on 
 standard Web technologies. Their interfaces are accessed over HTTP. That 
-interaface will be REST based. They will return either HTML or JSON depending 
+interface will be REST based. They will return either HTML or JSON depending 
 on HTTP headers. The HTML interface will be a simple layer to the underlaying 
 api. They have simple embedded HTTP servers. That server understands just 
 enough HTTP to implement the api. It is not a full fledged HTTP server,
