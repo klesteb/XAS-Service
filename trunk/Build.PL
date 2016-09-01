@@ -40,7 +40,7 @@ if ($^O eq 'MSWin32') {
         etc          => $path . '\\etc',
         sbin         => $path . '\\sbin',
         script       => $path . '\\bin',
-        web          => $path . \\var\\lib\\web',
+        web          => $path . '\\var\\lib\\web',
        'init.d'      => $path . '\\etc\\init.d',
        'logrotate.d' => $path . '\\etc\\logrotate.d',
        'profile.d'   => $path . '\\etc\\profile.d',
