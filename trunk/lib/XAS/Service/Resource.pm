@@ -25,6 +25,14 @@ sub init {
       ? $args->{'json'}
       : undef;
 
+    $self->{'authenticator'} = exists $args->{'authenticator'}
+      ? $args->{'authenticator'}
+      : undef;
+
+    $self->{'authorizer'} = exists $args->{'authorizer'}
+      ? $args->{'authorizier'}
+      : undef;
+
     $self->{'app_name'} = exists $args->{'app_name'}
       ? $args->{'app_name'}
       : 'Test App';
@@ -53,10 +61,15 @@ sub is_authorized {
 
     if ($auth) {
 
-        warn "is_authorized - override this please\n";
-        warn sprintf("username: %s, password: %s\n", $auth->username, $auth->password);
+        if (defined($self->authenticator)) {
 
-        $stat = 1;
+            if ($self->authenticator->authenticate($auth->username, $auth->password)) {
+
+                $stat = 1;
+
+            }
+
+        }
 
         return $stat;
 
@@ -452,6 +465,20 @@ sub alias {
 
 }
 
+sub authenticator {
+    my $self = shift;
+
+    return $self->{'authenticator'};
+
+}
+
+sub authorizer {
+    my $self = shift;
+
+    return $self->{'authorizer'};
+
+}
+
 # -------------------------------------------------------------------------
 # mutators
 # -------------------------------------------------------------------------
@@ -585,8 +612,10 @@ in the XAS environment and log handling.
 
 =head2 is_authorized
 
-This method uses basic authenication and checks wither the user is valid. This
-needs to be overridden.
+This method uses basic authenication and checks wither the user is valid. By 
+default it checks to see if an authenticator has been defined. This 
+authenticator must have an authenticate() methed that takes the username 
+and password as parameters and returns "true" for success.
 
 =head2 options
 
@@ -728,6 +757,12 @@ Returns the handle for the XAS environment.
 =head2 log
 
 Returns the handle for the XAS logging.
+
+=head2 authenticator
+
+Returns the handle for an Authen::Simple authenticator or a module that
+implements a authenticate() method that takes a username and password as
+parameters and returns "true" for success.
 
 =head2 alias
 

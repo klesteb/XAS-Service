@@ -17,6 +17,7 @@ my $requires = {
     'Web::Machine'              => 0.17,
     'Data::FormValidator'       => 4.70,
     'POE::Filter::HTTP::Parser' => 1.06,
+    'Authen::Simple'            => 0.05,
     'Data::FormValidator::Constraints::MethodsFactory' => 0.02
 };
     

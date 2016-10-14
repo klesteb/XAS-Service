@@ -17,6 +17,7 @@ Requires:       perl(Template) >= 2.18
 Requires:       perl(Web::Machine) >= 0.17
 Requires:       perl(Data::FormValidator) >= 4.81
 Requires:       perl(POE::Filter::HTTP::Parser) >= 1.08
+Requires:       perl(Authen::Simple) >= 0.05
 Requires:       perl(Data::FormValidator::Constraints::MethodsFactory) >= 0.02
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
