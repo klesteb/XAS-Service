@@ -8,8 +8,8 @@ use Plack::Util;
 use Data::Dumper;
 use Socket ':all';
 use HTTP::Message::PSGI;
-use XAS::Constants 'CODEREF';
 use POE::Filter::HTTP::Parser;
+use XAS::Constants 'CODEREF HASHREF';
 
 use XAS::Class
   debug   => 0,
@@ -29,7 +29,10 @@ use XAS::Class
 
 sub process_request {
     my $self = shift;
-    my ($request, $ctx) = validate_params(\@_, [1,1]);
+    my ($request, $ctx) = validate_params(\@_, [
+        1,
+        { type => HASHREF },
+    ]);
 
     my $app      = $self->app;
     my $alias    = $self->alias;
@@ -58,7 +61,10 @@ sub process_request {
 
 sub process_response {
     my $self = shift;
-    my ($output, $ctx) = validate_params(\@_, [1,1]);
+    my ($output, $ctx) = validate_params(\@_, [
+        1,
+        { type => HASHREF },
+    ]);
 
     my $alias = $self->alias;
 
@@ -73,20 +79,6 @@ sub process_response {
 # ---------------------------------------------------------------------
 # Private Events
 # ---------------------------------------------------------------------
-
-sub _client_flushed {
-    my ($self, $wheel) = @_[OBJECT, ARG0];
-
-    my $alias = $self->alias;
-    my $host  = $self->peerhost($wheel);
-    my $port  = $self->peerport($wheel);
-
-    $self->log->debug(sprintf('%s: _client_flushed() - wheel: %s, host: %s, port: %s', $alias, $wheel, $host, $port));
-    $self->log->info_msg('service_client_flushed', $alias, $host, $port, $wheel);
-
-    delete $self->{'clients'}->{$wheel};
-
-}
 
 # ---------------------------------------------------------------------
 # Private Methods
