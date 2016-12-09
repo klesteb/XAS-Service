@@ -86,7 +86,7 @@ B<WARNING>
 This package includes a test micro server. You may want to check the 
 configuration file to see if it reflects your environment.
 
-Once that is done. You need to start the collector. On Debian or RHEL
+Once that is done. You need to start the service. On Debian or RHEL
 you would issue the following commands:
 
     # service xas-testd start
@@ -117,7 +117,7 @@ The latest and greatest is always available at:
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2016 Kevin L. Esteb
+Copyright (c) 2016 Kevin L. Esteb
 
 This is free software; you can redistribute it and/or modify it under
 the terms of the Artistic License 2.0. For details, see the full text
