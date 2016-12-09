@@ -35,6 +35,7 @@
 # ============================================================================
 #
 
+use lib '/home/kevin/dev/XAS/trunk/lib';
 use lib '/home/kevin/dev/XAS-Service/trunk/lib';
 
 use XAS::Apps::Service::Testd;

@@ -4,8 +4,10 @@ use Template;
 use JSON::XS;
 use Web::Machine;
 use Plack::Builder;
+use Authen::Simple;
 use Plack::App::File;
 use Plack::App::URLMap;
+use Authen::Simple::PAM;
 use XAS::Service::Server;
 
 use XAS::Class
@@ -20,6 +22,8 @@ use XAS::Class
       SERVICE_DESCRIPTION  => 'This process is a test micro service'
   }
 ;
+
+#use Data::Dumper;
 
 # ----------------------------------------------------------------------
 # Public Methods
@@ -54,7 +58,10 @@ sub build_app {
 
     my $builder = Plack::Builder->new();
     my $urlmap  = Plack::App::URLMap->new();
-    
+    my $authen  = Authen::Simple->new(
+        Authen::Simple::PAM->new(service => 'login')
+    );
+
     $urlmap->mount('/' => Web::Machine->new(
         resource => 'XAS::Service::Resource',
         resource_args => [
@@ -62,7 +69,8 @@ sub build_app {
             template        => $template,
             json            => $json,
             app_name        => $name,
-            app_description => $description
+            app_description => $description,
+            authenticator   => $authen,
         ] )
     );
 
