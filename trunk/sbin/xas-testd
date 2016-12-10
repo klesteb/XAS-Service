@@ -38,11 +38,11 @@
 use lib '/home/kevin/dev/XAS/trunk/lib';
 use lib '/home/kevin/dev/XAS-Service/trunk/lib';
 
-use XAS::Apps::Service::Testd;
+use XAS::Apps::Service::Processor;
 
 main: {
 
-    my $app = XAS::Apps::Service::Testd->new(
+    my $app = XAS::Apps::Service::Processor->new(
         -throws => 'xas-testd',
     );
 

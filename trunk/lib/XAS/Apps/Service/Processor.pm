@@ -1,4 +1,4 @@
-package XAS::Apps::Service::Testd;
+package XAS::Apps::Service::Processor;
 
 use Template;
 use JSON::XS;
@@ -7,13 +7,14 @@ use Plack::Builder;
 use Authen::Simple;
 use Plack::App::File;
 use Plack::App::URLMap;
-use Authen::Simple::PAM;
 use XAS::Service::Server;
 
 use XAS::Class
   version    => '0.01',
   base       => 'XAS::Lib::App::Service',
   mixin      => 'XAS::Lib::Mixins::Configs',
+  utils      => 'load_module trim',
+  constants  => 'DELIMITER',
   filesystem => 'File',
   accessors  => 'cfg',
   vars => {
@@ -28,6 +29,76 @@ use XAS::Class
 # ----------------------------------------------------------------------
 # Public Methods
 # ----------------------------------------------------------------------
+
+sub build_routes {
+    my $self        = shift;
+    my $urlmap      = shift;
+    my $base        = shift;
+    my $template    = shift;
+    my $json        = shift;
+    my $name        = shift;
+    my $description = shift;
+    my $authen      = shift;
+
+    $$urlmap->mount('/' => Web::Machine->new(
+        resource => 'XAS::Service::Resource',
+        resource_args => [
+            alias           => 'root',
+            template        => $template,
+            json            => $json,
+            app_name        => $name,
+            app_description => $description,
+            authenticator   => $authen,
+        ] )
+    );
+
+}
+
+sub build_static {
+    my $self = shift;
+    my $base = shift;
+
+    my $urlmap = Plack::App::URLMap->new();
+
+    # static routes
+
+    $urlmap->mount('/js' => Plack::App::File->new(
+        root => $base . '/root/js' )
+    );
+
+    $urlmap->mount('/css' => Plack::App::File->new(
+        root => $base . '/root/css')
+    );
+
+    $urlmap->mount('/yaml' => Plack::App::File->new(
+        root => $base . '/root/yaml/yaml')
+    );
+
+    return $urlmap;
+
+}
+
+sub build_authen {
+    my $self = shift;
+
+    my @parameters;
+    my $authen = $self->cfg->val('authenticator', 'name', 'Authen::Simple::PAM');
+    my $params = $self->cfg->val('authenticator', 'parameters', "service = 'login'");
+
+    foreach my $p (split(',', $params)) {
+
+        my ($key, $value) = split('=', $p);
+
+        push(@parameters, trim($key));
+        push(@parameters, trim($value));
+
+    }
+
+    load_module($authen);
+
+    return Authen::Simple->new( $authen->new(@parameters) );
+
+}
 
 sub build_app {
     my $self   = shift;
@@ -49,6 +120,7 @@ sub build_app {
 
     my $template = Template->new($config);
     my $json     = JSON::XS->new->utf8();
+    my $authen   = $self->build_authen;
 
     # allow variables with preceeding _
 
@@ -57,36 +129,9 @@ sub build_app {
     # handlers, using URLMap for routing
 
     my $builder = Plack::Builder->new();
-    my $urlmap  = Plack::App::URLMap->new();
-    my $authen  = Authen::Simple->new(
-        Authen::Simple::PAM->new(service => 'login')
-    );
+    my $urlmap  = $self->build_static($base);
 
-    $urlmap->mount('/' => Web::Machine->new(
-        resource => 'XAS::Service::Resource',
-        resource_args => [
-            alias           => 'root',
-            template        => $template,
-            json            => $json,
-            app_name        => $name,
-            app_description => $description,
-            authenticator   => $authen,
-        ] )
-    );
-
-    # static files
-
-    $urlmap->mount('/js' => Plack::App::File->new(
-        root => $base . '/root/js' )
-    );
-
-    $urlmap->mount('/css' => Plack::App::File->new(
-        root => $base . '/root/css')
-    );
-
-    $urlmap->mount('/yaml' => Plack::App::File->new(
-        root => $base . '/root/yaml/yaml')
-    );
+    $self->build_routes(\$urlmap, $base, $template, $json, $name, $description, $authen);
 
     return $builder->to_app($urlmap->to_app);
 
