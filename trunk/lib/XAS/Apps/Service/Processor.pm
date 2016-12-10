@@ -14,8 +14,7 @@ use XAS::Class
   base       => 'XAS::Lib::App::Service',
   mixin      => 'XAS::Lib::Mixins::Configs',
   utils      => 'load_module trim',
-  constants  => 'DELIMITER',
-  filesystem => 'File',
+  filesystem => 'File Dir',
   accessors  => 'cfg',
   vars => {
       SERVICE_NAME         => 'XAS_TESTD',
@@ -24,7 +23,7 @@ use XAS::Class
   }
 ;
 
-#use Data::Dumper;
+use Data::Dumper;
 
 # ----------------------------------------------------------------------
 # Public Methods
@@ -56,22 +55,22 @@ sub build_routes {
 
 sub build_static {
     my $self = shift;
-    my $base = shift;
+    my $root = shift;
 
     my $urlmap = Plack::App::URLMap->new();
 
     # static routes
 
     $urlmap->mount('/js' => Plack::App::File->new(
-        root => $base . '/root/js' )
+        root => Dir($root, '/js')->path )
     );
 
     $urlmap->mount('/css' => Plack::App::File->new(
-        root => $base . '/root/css')
+        root => Dir($root, '/css')->path )
     );
 
     $urlmap->mount('/yaml' => Plack::App::File->new(
-        root => $base . '/root/yaml/yaml')
+        root => Dir($root, '/yaml/yaml')->path )
     );
 
     return $urlmap;
@@ -105,15 +104,21 @@ sub build_app {
 
     # define base, name and description
 
-    my $base = $self->cfg->val('app', 'base', '/home/kevin/dev/XAS-Service/trunk/web');
+    my @paths;
+    my $path = Dir($self->env->lib, 'web', 'root');
+    my $root = Dir($self->cfg->val('app', 'root', $path->path));
+    my $base = Dir($self->cfg->val('app', 'base', $path->path));
     my $name = $self->cfg->val('app', 'name', 'WEB Services');
     my $description = $self->cfg->val('app', 'description', 'Test api using RESTFUL HAL-JSON');
+
+    push(@paths, $base->path);
+    push(@paths, $root->path) unless ($base eq $root);
 
     # Template config
 
     my $config = {
-        INCLUDE_PATH => File($base, 'root')->path,   # or list ref
-        INTERPOLATE  => 1,  # expand "$var" in plain text
+        INCLUDE_PATH => \@paths,   # or list ref
+        INTERPOLATE  => 1,         # expand "$var" in plain text
     };
 
     # create various objects
@@ -129,7 +134,7 @@ sub build_app {
     # handlers, using URLMap for routing
 
     my $builder = Plack::Builder->new();
-    my $urlmap  = $self->build_static($base);
+    my $urlmap  = $self->build_static($root);
 
     $self->build_routes(\$urlmap, $base, $template, $json, $name, $description, $authen);
 
