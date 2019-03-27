@@ -4,7 +4,7 @@ debian/changelog
 debian/compat
 debian/control
 debian/copyright
-debian/libxas-server-perl.docs
+debian/libxas-service-perl.docs
 debian/postinst
 debian/postrm
 debian/preinst
