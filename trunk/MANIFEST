@@ -13,7 +13,7 @@ debian/watch
 etc/xas-testd.ini
 init.d/xas-testd.debian
 init.d/xas-testd.rhel
-lib/XAS/Apps/Service/Testd.pm
+lib/XAS/Apps/Service/Processor.pm
 lib/XAS/Docs/Service/Installation.pm
 lib/XAS/Msgs/Service.msg
 lib/XAS/Service.pm
