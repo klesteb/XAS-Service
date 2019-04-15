@@ -65,6 +65,7 @@ sub is_authorized {
 
             if ($self->authenticator->authenticate($auth->username, $auth->password)) {
 
+                $self->request->env->{'REMOTE_USER'} = $auth->username;
                 $stat = 1;
 
             }
