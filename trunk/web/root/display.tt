@@ -21,10 +21,10 @@
     <tr>
       <td>
 [%- IF data._links.delete %]
- <a href="[% data._links.delete.href %]" class="ym-button ym-delete action_delete">[% data._links.delete.title %]</a> 
+ <a href="[% data._links.delete.href %]" class="ym-button ym-delete action-delete">[% data._links.delete.title %]</a> 
 [% END -%]
 [%- IF data._links.update %]
- <a href="[% data._links.update.href %]" class="ym-button ym-edit">[% data._links.update.title %]</a>
+ <a href="[% data._links.update.href %]" class="ym-button ym-edit action-update">[% data._links.update.title %]</a>
 [% END -%]
       </td>
     </tr>

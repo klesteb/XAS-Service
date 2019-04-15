@@ -182,7 +182,7 @@ sub finish_request {
     };
 
     $self->log->info(
-        sprintf('%s: %s requested a %s for %s with a status of %s',
+        sprintf('%s: \"%s\" requested a %s for %s with a status of %s',
             $alias, $user, $method, $path, $code)
     );
 
