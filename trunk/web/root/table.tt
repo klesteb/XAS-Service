@@ -5,7 +5,8 @@
 [%#                                                 -%]
 [%# Invoke with INCLUDE table.tt table = <variable> -%]
 [%#                                                 -%]
-[%# USE dumper(ident=>0, pad=>"<br>") %]
+[%# USE dumper(ident=>0, pad=>"<br>")               -%]
+[%- SET count = 0                                   -%]
   <table class="bordertable">
     <caption>[% table.overheading %]</caption>
     <thead>
@@ -39,7 +40,7 @@
       </tr>
     [% END -%]
     [% IF table.rows == '' %]
-      <tr><td">No Data</td></tr>
+      <tr><td>No Data</td></tr>
     [% END -%]
     </tbody>
     [% IF count > 25 %]
