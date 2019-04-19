@@ -5,15 +5,16 @@
 [%#                                                    %]
 [%# invoke INCLUDE display.tt data = <variable>        %]
 [%#                                                    %]
+[%# USE dumper(ident=>0, pad=>"<br>")                 -%]
+[%# dumper.dump(data)                                 -%]
+[%#                                                    %]
 <table class="bordertable">
-  <caption>[% data.heading %]</caption>
+  <caption>[% data._display.heading %]</caption>
   <tbody>
-[%- FOREACH field IN data.fields %]
+[%- FOREACH row IN data._display.rows %]
     <tr>
-  [% UNLESS field == '_links' %]
-      <td>[% field %]</td>
-      <td>[% data.$field %]</td>
-  [% END -%]
+      <td>[% row.title %]</td>
+      <td>[% row.value %]</td>
     </tr>
 [% END-%]
   </tbody>

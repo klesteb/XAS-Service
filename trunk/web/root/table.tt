@@ -8,10 +8,10 @@
 [%# USE dumper(ident=>0, pad=>"<br>")               -%]
 [%- SET count = 0                                   -%]
   <table class="bordertable">
-    <caption>[% table.overheading %]</caption>
+    <caption>[% table._display.overheading %]</caption>
     <thead>
       <tr>
-      [% FOREACH heading IN table.headings %]
+      [% FOREACH heading IN table._display.headings %]
         <th>[% heading %]</th>
       [% END -%]
       </tr>

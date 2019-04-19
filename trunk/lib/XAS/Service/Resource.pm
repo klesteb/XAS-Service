@@ -366,7 +366,8 @@ sub format_json {
     my $data = shift;
 
     delete $data->{'navigation'};
-
+    delete $data->{'_display'};
+    
     return $self->json->encode($data);
 
 }
